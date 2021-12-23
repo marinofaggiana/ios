@@ -61,8 +61,6 @@ excluded:
   - iOSClient/Login/NCLoginWeb.swift
   - iOSClient/Main/Account Request/NCAccountRequest.swift
   - iOSClient/Main/AudioRecorder/NCAudioRecorderViewController.swift
-  - iOSClient/Main/Collection Common/NCCollectionViewCommon.swift
-  - iOSClient/Main/Collection Common/NCCollectionCommon+DataSource.swift
   - iOSClient/Main/Collection Common/NCGridCell.swift
   - iOSClient/Main/Collection Common/NCListCell.swift
   - iOSClient/Main/Create cloud/NCCreateFormUploadAssets.swift

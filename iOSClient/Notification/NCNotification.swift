@@ -333,11 +333,7 @@ class NCNotificationCell: UITableViewCell, NCCellProtocol {
             return avatar
         }
     }
-    var fileObjectId: String? {
-        get {
-            return nil
-        }
-    }
+    var fileObjectId: String? = nil
     var fileUser: String? {
         get {
             return user

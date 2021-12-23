@@ -41,7 +41,8 @@ extension NCCollectionViewCommon {
         var isOffline = false
 
         var titleDelete = NSLocalizedString("_delete_", comment: "")
-        if NCManageDatabase.shared.isMetadataShareOrMounted(metadata: metadata, metadataFolder: metadataFolder) {
+        let (isShare, isMounted) = NCManageDatabase.shared.isMetadataShareOrMounted(metadata: metadata, metadataFolder: metadataFolder)
+        if isShare || isMounted {
             titleDelete = NSLocalizedString("_leave_share_", comment: "")
         } else if metadata.directory {
             titleDelete = NSLocalizedString("_delete_folder_", comment: "")

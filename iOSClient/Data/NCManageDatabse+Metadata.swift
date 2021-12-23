@@ -738,30 +738,22 @@ extension NCManageDatabase {
         let sortProperties = [SortDescriptor(keyPath: sort, ascending: ascending), SortDescriptor(keyPath: "fileNameView", ascending: false)]
         let results = realm.objects(tableMetadata.self).filter(predicate).sorted(by: sortProperties)
 
-        return Array(results.map { tableMetadata.init(value: $0) })
+        return Array(results.map { tableMetadata(value: $0) })
     }
 
-    func isMetadataShareOrMounted(metadata: tableMetadata, metadataFolder: tableMetadata?) -> Bool {
-
+    func isMetadataShareOrMounted(metadata: tableMetadata, metadataFolder: tableMetadata?) -> (Bool, Bool) {
         var isShare = false
         var isMounted = false
 
         if metadataFolder != nil {
-
             isShare = metadata.permissions.contains(NCGlobal.shared.permissionShared) && !metadataFolder!.permissions.contains(NCGlobal.shared.permissionShared)
             isMounted = metadata.permissions.contains(NCGlobal.shared.permissionMounted) && !metadataFolder!.permissions.contains(NCGlobal.shared.permissionMounted)
-
         } else if let directory = NCManageDatabase.shared.getTableDirectory(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", metadata.account, metadata.serverUrl)) {
-
             isShare = metadata.permissions.contains(NCGlobal.shared.permissionShared) && !directory.permissions.contains(NCGlobal.shared.permissionShared)
             isMounted = metadata.permissions.contains(NCGlobal.shared.permissionMounted) && !directory.permissions.contains(NCGlobal.shared.permissionMounted)
         }
 
-        if isShare || isMounted {
-            return true
-        } else {
-            return false
-        }
+        return (isShare, isMounted)
     }
 
     func isDownloadMetadata(_ metadata: tableMetadata, download: Bool) -> Bool {

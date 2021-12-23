@@ -25,7 +25,22 @@ import UIKit
 
 @objc protocol NCCellProtocol {
     var fileAvatarImageView: UIImageView? { get }
-    var fileObjectId: String? { get }
     var filePreviewImageView: UIImageView? { get }
-    var fileUser: String? { get }
+    var fileObjectId: String? { get set }
+    var fileUser: String? { get set }
+}
+
+protocol NCMetadataCell: NCCellProtocol {
+    var imageItem: UIImageView! { get set }
+    var imageSelect: UIImageView! { get set }
+    var imageStatus: UIImageView! { get set }
+    var imageFavorite: UIImageView! { get set }
+    var imageLocal: UIImageView! { get set }
+    var labelTitle: UILabel! { get set }
+    var buttonMore: UIButton! { get set }
+    var progressView: UIProgressView! { get set }
+
+    func setButtonMore(named: String, image: UIImage)
+    func selectMode(_ status: Bool)
+    func selected(_ status: Bool)
 }

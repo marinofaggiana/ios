@@ -24,7 +24,7 @@
 import UIKit
 import NCCommunication
 
-class NCTransfers: NCCollectionViewCommon {
+class NCTransfers: NCCollectionViewCommon, NCTransferCellDelegate {
 
     var metadataTemp: tableMetadata?
 

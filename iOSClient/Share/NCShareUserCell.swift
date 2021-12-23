@@ -42,11 +42,7 @@ class NCShareUserCell: UITableViewCell, NCCellProtocol {
             return imageItem
         }
     }
-    var fileObjectId: String? {
-        get {
-            return nil
-        }
-    }
+    var fileObjectId: String? = nil
     var filePreviewImageView: UIImageView? {
         get {
             return nil
@@ -56,6 +52,7 @@ class NCShareUserCell: UITableViewCell, NCCellProtocol {
         get {
             return tableShare?.shareWith
         }
+        set { }
     }
 
     override func awakeFromNib() {
@@ -104,22 +101,10 @@ class NCShareUserDropDownCell: DropDownCell, NCCellProtocol {
             return imageItem
         }
     }
-    var fileObjectId: String? {
-        get {
-            return nil
-        }
-    }
-    var filePreviewImageView: UIImageView? {
-        get {
-            return nil
-        }
-    }
+    var fileObjectId: String? = nil
+    var filePreviewImageView: UIImageView? { return nil }
     var fileUser: String? {
-        get {
-            return user
-        }
-        set {
-            user = newValue ?? ""
-        }
+        get { return user }
+        set { user = newValue ?? "" }
     }
 }

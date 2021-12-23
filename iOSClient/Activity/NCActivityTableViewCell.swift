@@ -57,11 +57,7 @@ class NCActivityTableViewCell: UITableViewCell, NCCellProtocol {
             return avatar
         }
     }
-    var fileObjectId: String? {
-        get {
-            return nil
-        }
-    }
+    var fileObjectId: String? = nil
     var filePreviewImageView: UIImageView? {
         get {
             return nil

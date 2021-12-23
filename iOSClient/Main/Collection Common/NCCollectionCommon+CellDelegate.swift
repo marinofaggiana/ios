@@ -19,7 +19,6 @@ extension NCCollectionViewCommon: NCListCellDelegate, NCGridCellDelegate {
         NCFunctionCenter.shared.openShare(viewController: self, metadata: metadata, indexPage: .sharing)
     }
 
-    
     func tapMoreGridItem(with objectId: String, namedButtonMore: String, image: UIImage?, sender: Any) {
 
         if isEditMode { return }
