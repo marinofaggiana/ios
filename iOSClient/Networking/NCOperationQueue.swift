@@ -124,9 +124,9 @@ import NCCommunication
 
     // Download Thumbnail
 
-    @objc func downloadThumbnail(metadata: tableMetadata, placeholder: Bool, cell: UIView?, view: UIView?) {
+    @objc func downloadThumbnail(metadata: tableMetadata, placeholder: Bool, cell: NCCellProtocol?, view: UIView?) {
 
-        let cell: NCCellProtocol? = cell as? NCCellProtocol
+//        let cell: NCCellProtocol? = cell as? NCCellProtocol
 
         if placeholder {
             if metadata.iconName.count > 0 {

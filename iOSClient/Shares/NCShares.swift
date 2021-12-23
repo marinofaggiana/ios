@@ -43,12 +43,13 @@ class NCShares: NCCollectionViewCommon {
 
     override func reloadDataSource() {
         super.reloadDataSource()
+        guard let appDelegate = appDelegate else { return }
 
         DispatchQueue.global().async {
             self.metadatasSource.removeAll()
-            let sharess = NCManageDatabase.shared.getTableShares(account: self.appDelegate.account)
+            let sharess = NCManageDatabase.shared.getTableShares(account: appDelegate.account)
             for share in sharess {
-                if let metadata = NCManageDatabase.shared.getMetadata(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@ AND fileName == %@", self.appDelegate.account, share.serverUrl, share.fileName)) {
+                if let metadata = NCManageDatabase.shared.getMetadata(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@ AND fileName == %@", appDelegate.account, share.serverUrl, share.fileName)) {
                     if !(self.metadatasSource.contains { $0.ocId == metadata.ocId }) {
                         self.metadatasSource.append(metadata)
                     }
@@ -83,13 +84,13 @@ class NCShares: NCCollectionViewCommon {
                 self.isReloadDataSourceNetworkInProgress = false
             }
 
-            if errorCode == 0 {
+            if errorCode == 0, let appDelegate = self.appDelegate {
 
                 NCManageDatabase.shared.deleteTableShare(account: account)
                 if shares != nil {
-                    NCManageDatabase.shared.addShare(urlBase: self.appDelegate.urlBase, account: account, shares: shares!)
+                    NCManageDatabase.shared.addShare(urlBase: appDelegate.urlBase, account: account, shares: shares!)
                 }
-                self.appDelegate.shares = NCManageDatabase.shared.getTableShares(account: account)
+                appDelegate.shares = NCManageDatabase.shared.getTableShares(account: account)
                 self.reloadDataSource()
 
             } else {

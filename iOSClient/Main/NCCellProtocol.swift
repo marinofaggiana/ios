@@ -23,7 +23,7 @@
 
 import UIKit
 
-protocol NCCellProtocol {
+@objc protocol NCCellProtocol {
     var fileAvatarImageView: UIImageView? { get }
     var fileObjectId: String? { get }
     var filePreviewImageView: UIImageView? { get }

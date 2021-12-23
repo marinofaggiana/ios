@@ -49,10 +49,11 @@ class NCRecent: NCCollectionViewCommon {
 
     override func reloadDataSource() {
         super.reloadDataSource()
+        guard let appDelegate = appDelegate else { return }
 
         DispatchQueue.global().async {
 
-            self.metadatasSource = NCManageDatabase.shared.getAdvancedMetadatas(predicate: NSPredicate(format: "account == %@", self.appDelegate.account), page: 1, limit: 100, sorted: "date", ascending: false)
+            self.metadatasSource = NCManageDatabase.shared.getAdvancedMetadatas(predicate: NSPredicate(format: "account == %@", appDelegate.account), page: 1, limit: 100, sorted: "date", ascending: false)
             self.dataSource = NCDataSource(metadatasSource: self.metadatasSource, directoryOnTop: false, favoriteOnTop: false)
 
             DispatchQueue.main.async {
@@ -69,6 +70,7 @@ class NCRecent: NCCollectionViewCommon {
             networkSearch()
             return
         }
+        guard let appDelegate = appDelegate else { return }
 
         let requestBodyRecent =
         """
@@ -136,7 +138,7 @@ class NCRecent: NCCollectionViewCommon {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         let lessDateString = dateFormatter.string(from: Date())
-        let requestBody = String(format: requestBodyRecent, "/files/"+appDelegate.userId, lessDateString)
+        let requestBody = String(format: requestBodyRecent, "/files/" + appDelegate.userId, lessDateString)
 
         isReloadDataSourceNetworkInProgress = true
         collectionView?.reloadData()

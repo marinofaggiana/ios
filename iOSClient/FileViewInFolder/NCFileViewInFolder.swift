@@ -33,7 +33,7 @@ class NCFileViewInFolder: NCCollectionViewCommon {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        appDelegate.activeFileViewInFolder = self
+        appDelegate?.activeFileViewInFolder = self
         titleCurrentFolder = NCBrandOptions.shared.brand
         layoutKey = NCGlobal.shared.layoutViewViewInFolder
         enableSearchBar = false
@@ -44,7 +44,7 @@ class NCFileViewInFolder: NCCollectionViewCommon {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        guard let appDelegate = appDelegate else { return }
         appDelegate.activeViewController = self
 
         if serverUrl == NCUtilityFileSystem.shared.getHomeServer(account: appDelegate.account) {
@@ -78,13 +78,13 @@ class NCFileViewInFolder: NCCollectionViewCommon {
 
     override func reloadDataSource() {
         super.reloadDataSource()
-
+        guard let appDelegate = appDelegate else { return }
         DispatchQueue.global().async {
 
             if !self.isSearching {
-                self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", self.appDelegate.account, self.serverUrl))
+                self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, self.serverUrl))
                 if self.metadataFolder == nil {
-                    self.metadataFolder = NCManageDatabase.shared.getMetadataFolder(account: self.appDelegate.account, urlBase: self.appDelegate.urlBase, serverUrl: self.serverUrl)
+                    self.metadataFolder = NCManageDatabase.shared.getMetadataFolder(account: appDelegate.account, urlBase: appDelegate.urlBase, serverUrl: self.serverUrl)
                 }
             }
 
@@ -97,7 +97,7 @@ class NCFileViewInFolder: NCCollectionViewCommon {
 
                 // Blink file
                 if self.fileName != nil {
-                    if let metadata = NCManageDatabase.shared.getMetadata(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@ AND fileName == %@", self.appDelegate.account, self.serverUrl, self.fileName!)) {
+                    if let metadata = NCManageDatabase.shared.getMetadata(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@ AND fileName == %@", appDelegate.account, self.serverUrl, self.fileName!)) {
                         if let row = self.dataSource.getIndexMetadata(ocId: metadata.ocId) {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 UIView.animate(withDuration: 0.3) {

@@ -43,15 +43,16 @@ class NCFavorite: NCCollectionViewCommon {
 
     override func reloadDataSource() {
         super.reloadDataSource()
+        guard let appDelegate = appDelegate else { return }
 
         DispatchQueue.global().async {
 
             if !self.isSearching {
 
                 if self.serverUrl == "" {
-                    self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND favorite == true", self.appDelegate.account))
+                    self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND favorite == true", appDelegate.account))
                 } else {
-                    self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", self.appDelegate.account, self.serverUrl))
+                    self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, self.serverUrl))
                 }
             }
 

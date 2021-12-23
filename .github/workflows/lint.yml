@@ -16,9 +16,10 @@ on:
 jobs:
   Lint:
     runs-on: ubuntu-latest
-    
+    if: github.event.pull_request.draft == false
+
     steps:
      - uses: actions/checkout@v2
-       
+
      - name: GitHub Action for SwiftLint
        uses: norio-nomura/action-swiftlint@3.1.0

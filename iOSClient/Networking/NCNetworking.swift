@@ -261,7 +261,10 @@ import Queuer
 
             } else if errorCode == NSURLErrorServerCertificateUntrusted {
 
-                let alertController = UIAlertController(title: NSLocalizedString("_ssl_certificate_untrusted_", comment: ""), message: NSLocalizedString("_connect_server_anyway_", comment: ""), preferredStyle: .alert)
+                let alertController = UIAlertController(
+                    title: NSLocalizedString("_ssl_certificate_untrusted_", comment: ""),
+                    message: NSLocalizedString("_connect_server_anyway_", comment: ""),
+                    preferredStyle: .alert)
 
                 alertController.addAction(UIAlertAction(title: NSLocalizedString("_yes_", comment: ""), style: .default, handler: { _ in
                     NCNetworking.shared.writeCertificate(host: host)
@@ -274,8 +277,8 @@ import Queuer
 
                 alertController.addAction(UIAlertAction(title: NSLocalizedString("_certificate_details_", comment: ""), style: .default, handler: { _ in
                     if let navigationController = UIStoryboard(name: "NCViewCertificateDetails", bundle: nil).instantiateInitialViewController() as? UINavigationController {
-                        let vcCertificateDetails = navigationController.topViewController as! NCViewCertificateDetails
-                        vcCertificateDetails.host = host
+                        let vcCertificateDetails = navigationController.topViewController as? NCViewCertificateDetails
+                        vcCertificateDetails?.host = host
                         viewController?.present(navigationController, animated: true)
                     }
                 }))
@@ -1441,44 +1444,6 @@ import Queuer
             }
         }
     }
-
-    // MARK: - TEST API
-
-    /*
-    @objc public func getDirectDownload(urlBase: String, username: String, password: String, fileId: String, customUserAgent: String? = nil, completionHandler: @escaping (_ token: String?, _ errorCode: Int, _ errorDescription: String) -> Void) {
-                
-        let endpoint = "/ocs/v2.php/apps/dav/api/v1/direct"
-        
-        let url:URLConvertible = try! (urlBase + endpoint).asURL() as URLConvertible
-        var headers: HTTPHeaders = [.authorization(username: username, password: password)]
-        if customUserAgent != nil {
-            headers.update(.userAgent(customUserAgent!))
-        }
-        //headers.update(.contentType("application/json"))
-        headers.update(name: "OCS-APIRequest", value: "true")
-               
-        let method = HTTPMethod(rawValue: "POST")
-
-        let parameters = [
-            "fileId": fileId,
-        ]
-        
-        AF.request(url, method: method, parameters: parameters, headers: headers).validate(statusCode: 200..<300).response { (response) in
-            debugPrint(response)
-            
-            switch response.result {
-            case .failure(let error):
-                completionHandler(nil, 0, "")
-            case .success(let data):
-                if let data = data {
-                    completionHandler("", 0, "")
-                } else {
-                    completionHandler(nil, NSURLErrorBadServerResponse, NSLocalizedString("_error_decode_xml_", value: "Invalid response, error decode XML", comment: ""))
-                }
-            }
-        }
-    }
-    */
 }
 
 

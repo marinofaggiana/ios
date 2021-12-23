@@ -34,7 +34,7 @@ extension NCCollectionViewCommon {
 
         var actions = [NCMenuAction]()
 
-        guard let metadata = NCManageDatabase.shared.getMetadataFromOcId(metadata.ocId) else { return }
+        guard let metadata = NCManageDatabase.shared.getMetadataFromOcId(metadata.ocId), let appDelegate = appDelegate else { return }
         let serverUrl = metadata.serverUrl + "/" + metadata.fileName
         let isFolderEncrypted = CCUtility.isFolderEncrypted(metadata.serverUrl, e2eEncrypted: metadata.e2eEncrypted, account: metadata.account, urlBase: metadata.urlBase)
         let serverUrlHome = NCUtilityFileSystem.shared.getHomeServer(account: appDelegate.account)
@@ -133,13 +133,13 @@ extension NCCollectionViewCommon {
                     action: { _ in
                         if isOffline {
                             if metadata.directory {
-                                NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, offline: false, account: self.appDelegate.account)
+                                NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, offline: false, account: appDelegate.account)
                             } else {
                                 NCManageDatabase.shared.setLocalFile(ocId: metadata.ocId, offline: false)
                             }
                         } else {
                             if metadata.directory {
-                                NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, offline: true, account: self.appDelegate.account)
+                                NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, offline: true, account: appDelegate.account)
                                 NCOperationQueue.shared.synchronizationMetadata(metadata, selector: NCGlobal.shared.selectorDownloadAllFile)
                             } else {
                                 NCNetworking.shared.download(metadata: metadata, selector: NCGlobal.shared.selectorLoadOffline) { _ in }
@@ -318,7 +318,7 @@ extension NCCollectionViewCommon {
                     title: NSLocalizedString("_copy_file_", comment: ""),
                     icon: NCUtility.shared.loadImage(named: "doc.on.doc"),
                     action: { _ in
-                        self.appDelegate.pasteboardOcIds = [metadata.ocId]
+                        appDelegate.pasteboardOcIds = [metadata.ocId]
                         NCFunctionCenter.shared.copyPasteboard()
                     }
                 )
@@ -403,7 +403,7 @@ extension NCCollectionViewCommon {
                     action: { _ in
                         NCCommunication.shared.markE2EEFolder(fileId: metadata.fileId, delete: false) { account, errorCode, errorDescription in
                             if errorCode == 0 {
-                                NCManageDatabase.shared.deleteE2eEncryption(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", self.appDelegate.account, serverUrl))
+                                NCManageDatabase.shared.deleteE2eEncryption(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, serverUrl))
                                 NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, serverUrlTo: nil, etag: nil, ocId: nil, fileId: nil, encrypted: true, richWorkspace: nil, account: metadata.account)
                                 NCManageDatabase.shared.setMetadataEncrypted(ocId: metadata.ocId, encrypted: true)
 
@@ -428,7 +428,7 @@ extension NCCollectionViewCommon {
                     action: { _ in
                         NCCommunication.shared.markE2EEFolder(fileId: metadata.fileId, delete: true) { account, errorCode, errorDescription in
                             if errorCode == 0 {
-                                NCManageDatabase.shared.deleteE2eEncryption(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", self.appDelegate.account, serverUrl))
+                                NCManageDatabase.shared.deleteE2eEncryption(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, serverUrl))
                                 NCManageDatabase.shared.setDirectory(serverUrl: serverUrl, serverUrlTo: nil, etag: nil, ocId: nil, fileId: nil, encrypted: false, richWorkspace: nil, account: metadata.account)
                                 NCManageDatabase.shared.setMetadataEncrypted(ocId: metadata.ocId, encrypted: false)
 
@@ -534,9 +534,9 @@ extension NCCollectionViewCommon {
                 title: NSLocalizedString("_copy_file_", comment: ""),
                 icon: NCUtility.shared.loadImage(named: "doc.on.doc"),
                 action: { _ in
-                    self.appDelegate.pasteboardOcIds.removeAll()
+                    self.appDelegate?.pasteboardOcIds.removeAll()
                     for ocId in self.selectOcId {
-                        self.appDelegate.pasteboardOcIds.append(ocId)
+                        self.appDelegate?.pasteboardOcIds.append(ocId)
                     }
                     NCFunctionCenter.shared.copyPasteboard()
                     self.tapSelect(sender: self)

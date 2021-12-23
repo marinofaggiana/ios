@@ -33,7 +33,7 @@ class NCFiles: NCCollectionViewCommon {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        appDelegate.activeFiles = self
+        appDelegate?.activeFiles = self
         titleCurrentFolder = NCBrandOptions.shared.brand
         layoutKey = NCGlobal.shared.layoutViewFiles
         enableSearchBar = true
@@ -44,7 +44,7 @@ class NCFiles: NCCollectionViewCommon {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        if isRoot {
+        if isRoot, let appDelegate = appDelegate {
             serverUrl = NCUtilityFileSystem.shared.getHomeServer(account: appDelegate.account)
             titleCurrentFolder = getNavigationTitle()
         }
@@ -56,7 +56,7 @@ class NCFiles: NCCollectionViewCommon {
 
     override func initialize() {
 
-        if isRoot {
+        if isRoot, let appDelegate = appDelegate {
             serverUrl = NCUtilityFileSystem.shared.getHomeServer(account: appDelegate.account)
             titleCurrentFolder = getNavigationTitle()
             reloadDataSourceNetwork(forced: true)
@@ -69,13 +69,13 @@ class NCFiles: NCCollectionViewCommon {
 
     override func reloadDataSource() {
         super.reloadDataSource()
-        
+        guard let appDelegate = appDelegate else { return }
+
         DispatchQueue.main.async {
-                        
-            if !self.isSearching && self.appDelegate.account != "" && self.appDelegate.urlBase != "" {
-                self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", self.appDelegate.account, self.serverUrl))
+            if !self.isSearching && appDelegate.account != "" && appDelegate.urlBase != "" {
+                self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, self.serverUrl))
                 if self.metadataFolder == nil {
-                    self.metadataFolder = NCManageDatabase.shared.getMetadataFolder(account: self.appDelegate.account, urlBase: self.appDelegate.urlBase, serverUrl: self.serverUrl)
+                    self.metadataFolder = NCManageDatabase.shared.getMetadataFolder(account: appDelegate.account, urlBase: appDelegate.urlBase, serverUrl: self.serverUrl)
                 }
             }
             

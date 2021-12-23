@@ -398,7 +398,7 @@ extension NCMedia: UICollectionViewDataSource {
                 (cell as! NCGridMediaCell).imageItem.backgroundColor = nil
                 (cell as! NCGridMediaCell).imageItem.image = UIImage(contentsOfFile: CCUtility.getDirectoryProviderStorageIconOcId(metadata.ocId, etag: metadata.etag))
             } else {
-                NCOperationQueue.shared.downloadThumbnail(metadata: metadata, placeholder: false, cell: cell, view: collectionView)
+                NCOperationQueue.shared.downloadThumbnail(metadata: metadata, placeholder: false, cell: cell as? NCCellProtocol, view: collectionView)
             }
         }
     }

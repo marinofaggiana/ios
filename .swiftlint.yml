@@ -11,7 +11,8 @@ empty_count:
 
 line_length:
   # warning: 120
-  warning: 200
+  warning: 250
+  error: 250
 
 type_body_length:
   # error: 350
@@ -61,6 +62,7 @@ excluded:
   - iOSClient/Main/Account Request/NCAccountRequest.swift
   - iOSClient/Main/AudioRecorder/NCAudioRecorderViewController.swift
   - iOSClient/Main/Collection Common/NCCollectionViewCommon.swift
+  - iOSClient/Main/Collection Common/NCCollectionCommon+DataSource.swift
   - iOSClient/Main/Collection Common/NCGridCell.swift
   - iOSClient/Main/Collection Common/NCListCell.swift
   - iOSClient/Main/Create cloud/NCCreateFormUploadAssets.swift

@@ -24,7 +24,7 @@
 import UIKit
 import NCCommunication
 
-class NCTransfers: NCCollectionViewCommon, NCTransferCellDelegate {
+class NCTransfers: NCCollectionViewCommon {
 
     var metadataTemp: tableMetadata?
 
@@ -47,7 +47,7 @@ class NCTransfers: NCCollectionViewCommon, NCTransferCellDelegate {
         listLayout.itemHeight = 105
         collectionView?.collectionViewLayout = listLayout
         self.navigationItem.title = titleCurrentFolder
-        serverUrl = appDelegate.activeServerUrl
+        serverUrl = appDelegate?.activeServerUrl ?? serverUrl
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,13 +97,13 @@ class NCTransfers: NCCollectionViewCommon, NCTransferCellDelegate {
 
     override func longPressMoreListItem(with objectId: String, namedButtonMore: String, gestureRecognizer: UILongPressGestureRecognizer) {
 
-        if gestureRecognizer.state != .began { return }
+        guard let appDelegate = appDelegate, gestureRecognizer.state == .began else { return }
 
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
 
         alertController.addAction(UIAlertAction(title: NSLocalizedString("_cancel_", comment: ""), style: .cancel, handler: nil))
         alertController.addAction(UIAlertAction(title: NSLocalizedString("_cancel_all_task_", comment: ""), style: .default, handler: { _ in
-            NCNetworking.shared.cancelAllTransfer(account: self.appDelegate.account) {
+            NCNetworking.shared.cancelAllTransfer(account: appDelegate.account) {
                 self.reloadDataSource()
             }
         }))
@@ -164,7 +164,7 @@ class NCTransfers: NCCollectionViewCommon, NCTransferCellDelegate {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-        guard let metadata = dataSource.cellForItemAt(indexPath: indexPath) else {
+        guard let appDelegate = appDelegate, let metadata = dataSource.cellForItemAt(indexPath: indexPath) else {
             return collectionView.dequeueReusableCell(withReuseIdentifier: "transferCell", for: indexPath) as! NCTransferCell
         }
 
