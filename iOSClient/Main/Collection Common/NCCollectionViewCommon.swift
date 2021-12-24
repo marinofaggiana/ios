@@ -141,23 +141,17 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
 
         //
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(closeRichWorkspaceWebView),
-            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterCloseRichWorkspaceWebView),
-            object: nil)
+            self, selector: #selector(closeRichWorkspaceWebView),
+            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterCloseRichWorkspaceWebView), object: nil)
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(changeStatusFolderE2EE(_:)),
-            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterChangeStatusFolderE2EE),
-            object: nil)
+            self, selector: #selector(changeStatusFolderE2EE(_:)),
+            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterChangeStatusFolderE2EE), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(setNavigationItem), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterReloadAvatar), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(reloadDataSource(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterReloadDataSource), object: nil)
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(reloadDataSourceNetworkForced(_:)),
-            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterReloadDataSourceNetworkForced),
-            object: nil)
+            self, selector: #selector(reloadDataSourceNetworkForced(_:)),
+            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterReloadDataSourceNetworkForced), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(deleteFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterDeleteFile), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(moveFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterMoveFile), object: nil)
@@ -169,18 +163,16 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
         NotificationCenter.default.addObserver(self, selector: #selector(downloadStartFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterDownloadStartFile), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(downloadedFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterDownloadedFile), object: nil)
         NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(downloadCancelFile(_:)),
-            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterDownloadCancelFile),
-            object: nil)
+            self, selector: #selector(downloadCancelFile(_:)),
+            name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterDownloadCancelFile), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(uploadStartFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterUploadStartFile), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(uploadedFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterUploadedFile), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(uploadCancelFile(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterUploadCancelFile), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(triggerProgressTask(_:)), name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterProgressTask), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(triggerProgressTask(_:)),name: NSNotification.Name(rawValue: NCGlobal.shared.notificationCenterProgressTask), object: nil)
 
-        if let appDelegate = appDelegate, serverUrl == "" {
+        if let appDelegate = appDelegate, serverUrl.isEmpty {
             appDelegate.activeServerUrl = NCUtilityFileSystem.shared.getHomeServer(account: appDelegate.account)
         } else {
             appDelegate?.activeServerUrl = serverUrl
@@ -398,7 +390,7 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
                 for: appDelegate.user,
                    displayName: activeAccount?.displayName,
                    userBaseUrl: appDelegate)
-            
+
             let button = UIButton(type: .custom)
             button.setImage(image, for: .normal)
 
@@ -419,25 +411,25 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
             button.semanticContentAttribute = .forceLeftToRight
             button.sizeToFit()
             button.action(for: .touchUpInside) { _ in
-                
+
                 let accounts = NCManageDatabase.shared.getAllAccountOrderAlias()
-                if accounts.count > 0 {
-                    
+                if !accounts.isEmpty {
+
                     if let vcAccountRequest = UIStoryboard(name: "NCAccountRequest", bundle: nil).instantiateInitialViewController() as? NCAccountRequest {
-                        
+
                         vcAccountRequest.activeAccount = NCManageDatabase.shared.getActiveAccount()
                         vcAccountRequest.accounts = accounts
                         vcAccountRequest.enableTimerProgress = false
                         vcAccountRequest.enableAddAccount = true
                         vcAccountRequest.delegate = self
                         vcAccountRequest.dismissDidEnterBackground = true
-                        
+
                         let screenHeighMax = UIScreen.main.bounds.height - (UIScreen.main.bounds.height/5)
                         let numberCell = accounts.count + 1
                         let height = min(CGFloat(numberCell * Int(vcAccountRequest.heightCell) + 45), screenHeighMax)
-                        
+
                         let popup = NCPopupViewController(contentController: vcAccountRequest, popupWidth: 300, popupHeight: height)
-                        
+
                         UIApplication.shared.keyWindow?.rootViewController?.present(popup, animated: true)
                     }
                 }
@@ -468,50 +460,22 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
     }
 
     @objc func tapSelectMenu(sender: Any) {
-
         toggleMenuSelect()
     }
 
     @objc func longPressCollecationView(_ gestureRecognizer: UILongPressGestureRecognizer) {
-
         openMenuItems(with: nil, gestureRecognizer: gestureRecognizer)
-        /*
-        if #available(iOS 13.0, *) {
-            
-            let interaction = UIContextMenuInteraction(delegate: self)
-            self.view.addInteraction(interaction)
-        }
-        */
     }
-    
+
     // need to be implemented in base class to be overriden
-    func longPressMoreGridItem(with objectId: String, namedButtonMore: String, gestureRecognizer: UILongPressGestureRecognizer) {
-        print(#function)
-    }
-    func longPressGridItem(with objectId: String, gestureRecognizer: UILongPressGestureRecognizer) {
-        print(#function)
-    }
-    func longPressMoreListItem(with objectId: String, namedButtonMore: String, gestureRecognizer: UILongPressGestureRecognizer) {
-        print(#function)
-    }
-    func longPressListItem(with objectId: String, gestureRecognizer: UILongPressGestureRecognizer) {
-        print(#function)
-    }
+    func longPressMoreGridItem(with objectId: String, namedButtonMore: String, gestureRecognizer: UILongPressGestureRecognizer) { }
+    func longPressGridItem(with objectId: String, gestureRecognizer: UILongPressGestureRecognizer) { }
+    func longPressMoreListItem(with objectId: String, namedButtonMore: String, gestureRecognizer: UILongPressGestureRecognizer) { }
+    func longPressListItem(with objectId: String, gestureRecognizer: UILongPressGestureRecognizer) { }
 
     @available(iOS 13.0, *)
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
-
-            return nil
-
-        }, actionProvider: { _ in
-
-            // let share = UIAction(title: "Share Pupper", image: UIImage(systemName: "square.and.arrow.up")) { action in
-            // }
-            // return UIMenu(title: "Main Menu", children: [share])
-            return nil
-        })
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { return nil }, actionProvider: { _ in return nil })
     }
 
     func openMenuItems(with objectId: String?, gestureRecognizer: UILongPressGestureRecognizer) {
@@ -606,7 +570,7 @@ class NCCollectionViewCommon: UIViewController, UIGestureRecognizerDelegate, UIA
             DispatchQueue.main.async { self.refreshControl.endRefreshing() }
             return
         }
-        let completionHandler: ([tableMetadata]?, Int, String) -> Void =  { metadatas, errorCode, errorDescription in
+        let completionHandler: ([tableMetadata]?, Int, String) -> Void = { metadatas, errorCode, _ in
             DispatchQueue.main.async {
                 if self.searchController?.isActive == true, errorCode == 0, let metadatas = metadatas {
                     self.metadatasSource = metadatas

@@ -56,7 +56,7 @@ extension NCCollectionViewCommon: UICollectionViewDataSource {
         }
 
         // Avatar
-        if metadata.ownerId.count > 0,
+        if !metadata.ownerId.isEmpty,
            metadata.ownerId != appDelegate?.userId,
            appDelegate?.account == metadata.account {
             let fileName = metadata.userBaseUrl + "-" + metadata.ownerId + ".png"
