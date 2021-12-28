@@ -4,8 +4,10 @@
 //
 //  Created by Philippe Weidmann on 05.06.20.
 //  Copyright © 2020 Marino Faggiana. All rights reserved.
+//  Copyright © 2021 Henrik Storch. All rights reserved.
 //
 //  Author Marino Faggiana <marino.faggiana@nextcloud.com>
+//  Author Henrik Storch <henrik.storch@nextcloud.com>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -43,4 +45,20 @@ protocol NCMetadataCell: NCCellProtocol {
     func setButtonMore(named: String, image: UIImage)
     func selectMode(_ status: Bool)
     func selected(_ status: Bool)
+}
+
+extension NCMetadataCell {
+    func resetUI(for metadata: tableMetadata) {
+        fileObjectId = metadata.ocId
+        fileUser = metadata.ownerId
+        labelTitle.textColor = NCBrandColor.shared.label
+        labelTitle.text = metadata.fileNameView
+
+        imageSelect.image = nil
+        imageStatus.image = nil
+        imageLocal.image = nil
+        imageFavorite.image = nil
+        imageItem.image = nil
+        imageItem.backgroundColor = nil
+    }
 }

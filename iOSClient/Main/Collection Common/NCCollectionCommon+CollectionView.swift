@@ -1,15 +1,32 @@
 //
-//  NCCollectionCommon+DataSource.swift
+//  NCCollectionCommon+CollectionView.swift
 //  Nextcloud
 //
 //  Created by Henrik Storch on 23.12.21.
-//  Copyright © 2021 Marino Faggiana. All rights reserved.
+//  Copyright © 2020 Marino Faggiana. All rights reserved.
+//  Copyright © 2021 Henrik Storch. All rights reserved.
+//
+//  Author Marino Faggiana <marino.faggiana@nextcloud.com>
+//  Author Henrik Storch <henrik.storch@nextcloud.com>
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import UIKit
 import NCCommunication
 
-// MARK: - Collection View
+// MARK: - Data Source
 
 extension NCCollectionViewCommon: UICollectionViewDataSource {
 
@@ -101,23 +118,15 @@ extension NCCollectionViewCommon: UICollectionViewDataSource {
         cell.labelInfo.textColor = NCBrandColor.shared.systemGray
 
         // Progress
-        var totalBytes: Int64 = 0
-        if let progressType = appDelegate.listProgress[metadata.ocId] {
-            totalBytes = progressType.totalBytes
-        }
+        let totalBytes: Int64 = appDelegate.listProgress[metadata.ocId]?.totalBytes ?? 0
 
         // Share image
-        if isShare {
+        if isShare || appDelegate.account != metadata.account || (tableShare != nil && tableShare?.shareType != 3) {
             cell.imageShared.image = NCBrandColor.cacheImages.shared
         } else if tableShare != nil && tableShare?.shareType == 3 {
             cell.imageShared.image = NCBrandColor.cacheImages.shareByLink
-        } else if tableShare != nil && tableShare?.shareType != 3 {
-            cell.imageShared.image = NCBrandColor.cacheImages.shared
         } else {
             cell.imageShared.image = NCBrandColor.cacheImages.canShare
-        }
-        if appDelegate.account != metadata.account {
-            cell.imageShared.image = NCBrandColor.cacheImages.shared
         }
 
         // Write status on Label Info
@@ -140,24 +149,14 @@ extension NCCollectionViewCommon: UICollectionViewDataSource {
             } else {
                 cell.labelInfo.text = NSLocalizedString("_status_wait_upload_", comment: "")
             }
-        default:
-            break
-        }
-
-        // E2EE
-        cell.hideButtonShare(metadata.e2eEncrypted || isEncryptedFolder)
-
-        // Remove last separator
-        if collectionView.numberOfItems(inSection: indexPath.section) == indexPath.row + 1 {
-            cell.separator.isHidden = true
-        } else {
-            cell.separator.isHidden = false
+        default: break
         }
 
         // Disable Share Button
-        if appDelegate.disableSharesView == true {
-            cell.hideButtonShare(true)
-        }
+        cell.hideButtonShare(metadata.e2eEncrypted || isEncryptedFolder || appDelegate.disableSharesView)
+
+        // Remove last separator
+        cell.separator.isHidden = collectionView.numberOfItems(inSection: indexPath.section) == indexPath.row + 1
 
         return cell
     }
@@ -196,32 +195,13 @@ extension NCCollectionViewCommon: UICollectionViewDataSource {
 
     func setupCellUI(_ cell: NCMetadataCell, for metadata: tableMetadata, tableShare: tableShare?) {
         guard let appDelegate = appDelegate else { return }
-
-        cell.fileObjectId = metadata.ocId
-        cell.fileUser = metadata.ownerId
-        cell.labelTitle.textColor = NCBrandColor.shared.label
-        cell.labelTitle.text = metadata.fileNameView
-
-        cell.imageSelect.image = nil
-        cell.imageStatus.image = nil
-        cell.imageLocal.image = nil
-        cell.imageFavorite.image = nil
-        cell.imageItem.image = nil
-        cell.imageItem.backgroundColor = nil
+        cell.resetUI(for: metadata)
 
         // Progress
-        var progress: Float = 0.0
-        if let progressType = appDelegate.listProgress[metadata.ocId] {
-            progress = progressType.progress
-        }
-
-        if metadata.status == NCGlobal.shared.metadataStatusDownloading || metadata.status == NCGlobal.shared.metadataStatusUploading {
-            cell.progressView.isHidden = false
-            cell.progressView.progress = progress
-        } else {
-            cell.progressView.isHidden = true
-            cell.progressView.progress = 0.0
-        }
+        let progress = appDelegate.listProgress[metadata.ocId]?.progress ?? 0
+        let isInProgress = metadata.status == NCGlobal.shared.metadataStatusDownloading || metadata.status == NCGlobal.shared.metadataStatusUploading
+        cell.progressView.isHidden = !isInProgress
+        cell.progressView.progress = isInProgress ? progress : 0.0
 
         if metadata.directory {
             let (isShare, isMounted) = NCManageDatabase.shared.isMetadataShareOrMounted(metadata: metadata, metadataFolder: metadataFolder)
@@ -282,18 +262,12 @@ extension NCCollectionViewCommon: UICollectionViewDataSource {
         }
 
         // Edit mode
-        if isEditMode {
-            cell.selectMode(true)
-            if selectOcId.contains(metadata.ocId) {
-                cell.selected(true)
-            } else {
-                cell.selected(false)
-            }
-        } else {
-            cell.selectMode(false)
-        }
+        cell.selectMode(isEditMode)
+        cell.selected(isEditMode && selectOcId.contains(metadata.ocId))
     }
 }
+
+// MARK: - Delegate
 
 extension NCCollectionViewCommon: UICollectionViewDelegate {
 
@@ -302,7 +276,7 @@ extension NCCollectionViewCommon: UICollectionViewDelegate {
         guard let metadata = dataSource.cellForItemAt(indexPath: indexPath) else { return }
         appDelegate?.activeMetadata = metadata
 
-        if isEditMode {
+        guard !isEditMode else {
             if let index = selectOcId.firstIndex(of: metadata.ocId) {
                 selectOcId.remove(at: index)
             } else {
@@ -313,37 +287,32 @@ extension NCCollectionViewCommon: UICollectionViewDelegate {
             return
         }
 
-        if metadata.e2eEncrypted && !CCUtility.isEnd(toEndEnabled: appDelegate?.account) {
+        let isE2EDisabled = metadata.e2eEncrypted && !CCUtility.isEnd(toEndEnabled: appDelegate?.account)
+        guard !isE2EDisabled else {
             NCContentPresenter.shared.messageNotification("_info_", description: "_e2e_goto_settings_for_enable_", delay: NCGlobal.shared.dismissAfterSecond, type: NCContentPresenter.messageType.info, errorCode: NCGlobal.shared.errorE2EENotEnabled)
             return
         }
 
-        if metadata.directory {
+        guard !metadata.directory else {
+            return pushMetadata(metadata)
+        }
 
-            pushMetadata(metadata)
+        guard !(self is NCFileViewInFolder) else { return }
 
-        } else if !(self is NCFileViewInFolder) {
+        let imageIcon = UIImage(contentsOfFile: CCUtility.getDirectoryProviderStorageIconOcId(metadata.ocId, etag: metadata.etag))
 
-            let imageIcon = UIImage(contentsOfFile: CCUtility.getDirectoryProviderStorageIconOcId(metadata.ocId, etag: metadata.etag))
+        if metadata.isMediaClassFile {
+            let mediaMetadatas = dataSource.metadatas.filter({ $0.isMediaClassFile })
+            NCViewer.shared.view(viewController: self, metadata: metadata, metadatas: mediaMetadatas, imageIcon: imageIcon)
+            return
+        }
 
-            if metadata.classFile == NCCommunicationCommon.typeClassFile.image.rawValue || metadata.classFile == NCCommunicationCommon.typeClassFile.video.rawValue || metadata.classFile == NCCommunicationCommon.typeClassFile.audio.rawValue {
-                var metadatas: [tableMetadata] = []
-                for metadata in dataSource.metadatas {
-                    if metadata.classFile == NCCommunicationCommon.typeClassFile.image.rawValue || metadata.classFile == NCCommunicationCommon.typeClassFile.video.rawValue || metadata.classFile == NCCommunicationCommon.typeClassFile.audio.rawValue {
-                        metadatas.append(metadata)
-                    }
-                }
-                NCViewer.shared.view(viewController: self, metadata: metadata, metadatas: metadatas, imageIcon: imageIcon)
-                return
-            }
-
-            if CCUtility.fileProviderStorageExists(metadata.ocId, fileNameView: metadata.fileNameView) {
-                NCViewer.shared.view(viewController: self, metadata: metadata, metadatas: [metadata], imageIcon: imageIcon)
-            } else if NCCommunication.shared.isNetworkReachable() {
-                NCNetworking.shared.download(metadata: metadata, selector: NCGlobal.shared.selectorLoadFileView) { _ in }
-            } else {
-                NCContentPresenter.shared.messageNotification("_info_", description: "_go_online_", delay: NCGlobal.shared.dismissAfterSecond, type: NCContentPresenter.messageType.info, errorCode: NCGlobal.shared.errorOffline)
-            }
+        if CCUtility.fileProviderStorageExists(metadata.ocId, fileNameView: metadata.fileNameView) {
+            NCViewer.shared.view(viewController: self, metadata: metadata, metadatas: [metadata], imageIcon: imageIcon)
+        } else if NCCommunication.shared.isNetworkReachable() {
+            NCNetworking.shared.download(metadata: metadata, selector: NCGlobal.shared.selectorLoadFileView) { _ in }
+        } else {
+            NCContentPresenter.shared.messageNotification("_info_", description: "_go_online_", delay: NCGlobal.shared.dismissAfterSecond, type: NCContentPresenter.messageType.info, errorCode: NCGlobal.shared.errorOffline)
         }
     }
 
@@ -388,5 +357,28 @@ extension NCCollectionViewCommon: UICollectionViewDelegate {
                 self.collectionView(collectionView, didSelectItemAt: indexPath)
             }
         }
+    }
+}
+
+// MARK: - Layout
+
+extension NCCollectionViewCommon: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+
+        headerRichWorkspaceHeight = 0
+
+        if let richWorkspaceText = richWorkspaceText {
+            let trimmed = richWorkspaceText.trimmingCharacters(in: .whitespaces)
+            if !trimmed.isEmpty && !isSearching {
+                headerRichWorkspaceHeight = UIScreen.main.bounds.size.height / 4
+            }
+        }
+
+        return CGSize(width: collectionView.frame.width, height: headerHeight + headerRichWorkspaceHeight)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: footerHeight)
     }
 }

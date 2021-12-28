@@ -3,7 +3,7 @@
 //  Nextcloud
 //
 //  Created by Henrik Storch on 17/01/2019.
-//  Copyright © 2021. All rights reserved.
+//  Copyright © 2021 Henrik Storch. All rights reserved.
 //
 //  Author Henrik Storch <henrik.storch@nextcloud.com>
 //
@@ -172,7 +172,7 @@ extension NCActivityTableViewCell: UICollectionViewDelegate {
                     let fileName = (serverUrlFileName as NSString).lastPathComponent
                     let serverUrlFileName = serverUrl + "/" + fileName
                     
-                    NCNetworking.shared.readFile(serverUrlFileName: serverUrlFileName) { (account, metadata, errorCode, errorDescription) in
+                    NCNetworking.shared.readFile(serverUrlFileName: serverUrlFileName) { account, metadata, errorCode, _ in
                         
                         NCUtility.shared.stopActivityIndicator()
 

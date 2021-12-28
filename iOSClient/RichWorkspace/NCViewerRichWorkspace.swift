@@ -60,7 +60,7 @@ import MarkdownKit
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        NCNetworking.shared.readFile(serverUrlFileName: serverUrl) { (account, metadata, errorCode, errorDescription) in
+        NCNetworking.shared.readFile(serverUrlFileName: serverUrl) { account, metadata, errorCode, _ in
 
             if errorCode == 0 && account == self.appDelegate.account {
                 guard let metadata = metadata else { return }

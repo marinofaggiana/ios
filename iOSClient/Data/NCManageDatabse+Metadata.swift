@@ -3,7 +3,24 @@
 //  Nextcloud
 //
 //  Created by Henrik Storch on 30.11.21.
-//  Copyright © 2021 Marino Faggiana. All rights reserved.
+//  Copyright © 2017 Marino Faggiana. All rights reserved.
+//  Copyright © 2021 Henrik Storch. All rights reserved.
+//
+//  Author Marino Faggiana <marino.faggiana@nextcloud.com>
+//  Author Henrik Storch <henrik.storch@nextcloud.com>
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 import Foundation
@@ -727,7 +744,7 @@ extension NCManageDatabase {
             return nil
         }
 
-        return tableMetadata.init(value: result)
+        return tableMetadata(value: result)
     }
 
     func getMetadatasMedia(predicate: NSPredicate, sort: String, ascending: Bool = false) -> [tableMetadata] {
@@ -738,7 +755,7 @@ extension NCManageDatabase {
         let sortProperties = [SortDescriptor(keyPath: sort, ascending: ascending), SortDescriptor(keyPath: "fileNameView", ascending: false)]
         let results = realm.objects(tableMetadata.self).filter(predicate).sorted(by: sortProperties)
 
-        return Array(results.map { tableMetadata(value: $0) })
+        return results.map(tableMetadata.init)
     }
 
     func isMetadataShareOrMounted(metadata: tableMetadata, metadataFolder: tableMetadata?) -> (Bool, Bool) {

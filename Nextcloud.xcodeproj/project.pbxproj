@@ -29,7 +29,7 @@
 		AF2D7C7E2742559100ADF566 /* NCShareUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2D7C7D2742559100ADF566 /* NCShareUserCell.swift */; };
 		AF4AFF092774958000EBE49C /* NCCollectionCommon+CellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF082774958000EBE49C /* NCCollectionCommon+CellDelegate.swift */; };
 		AF4AFF0C277495A400EBE49C /* NCCollectionCommon+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF0B277495A400EBE49C /* NCCollectionCommon+Search.swift */; };
-		AF4AFF0F277495F900EBE49C /* NCCollectionCommon+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF0E277495F900EBE49C /* NCCollectionCommon+DataSource.swift */; };
+		AF4AFF0F277495F900EBE49C /* NCCollectionCommon+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF0E277495F900EBE49C /* NCCollectionCommon+CollectionView.swift */; };
 		AF4AFF132774BC4800EBE49C /* NCCollectionCommon+NCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF122774BC4800EBE49C /* NCCollectionCommon+NCDelegate.swift */; };
 		AF4AFF162774BD0F00EBE49C /* NCCollectionCommon+File.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4AFF152774BD0F00EBE49C /* NCCollectionCommon+File.swift */; };
 		AF4AFF182774D23500EBE49C /* NCListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78ACD4121903CE00088454D /* NCListCell.swift */; };
@@ -468,7 +468,7 @@
 		AF2D7C7D2742559100ADF566 /* NCShareUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NCShareUserCell.swift; sourceTree = "<group>"; };
 		AF4AFF082774958000EBE49C /* NCCollectionCommon+CellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+CellDelegate.swift"; sourceTree = "<group>"; };
 		AF4AFF0B277495A400EBE49C /* NCCollectionCommon+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+Search.swift"; sourceTree = "<group>"; };
-		AF4AFF0E277495F900EBE49C /* NCCollectionCommon+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+DataSource.swift"; sourceTree = "<group>"; };
+		AF4AFF0E277495F900EBE49C /* NCCollectionCommon+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+CollectionView.swift"; sourceTree = "<group>"; };
 		AF4AFF122774BC4800EBE49C /* NCCollectionCommon+NCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+NCDelegate.swift"; sourceTree = "<group>"; };
 		AF4AFF152774BD0F00EBE49C /* NCCollectionCommon+File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCCollectionCommon+File.swift"; sourceTree = "<group>"; };
 		AF4BF613275629E20081CEEF /* NCManageDatabase+Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NCManageDatabase+Account.swift"; sourceTree = "<group>"; };
@@ -1188,11 +1188,11 @@
 			isa = PBXGroup;
 			children = (
 				F70D7C3525FFBF81002B9E34 /* NCCollectionViewCommon.swift */,
-				AF4AFF122774BC4800EBE49C /* NCCollectionCommon+NCDelegate.swift */,
-				AF4AFF152774BD0F00EBE49C /* NCCollectionCommon+File.swift */,
-				AF4AFF0B277495A400EBE49C /* NCCollectionCommon+Search.swift */,
 				AF4AFF082774958000EBE49C /* NCCollectionCommon+CellDelegate.swift */,
-				AF4AFF0E277495F900EBE49C /* NCCollectionCommon+DataSource.swift */,
+				AF4AFF0E277495F900EBE49C /* NCCollectionCommon+CollectionView.swift */,
+				AF4AFF152774BD0F00EBE49C /* NCCollectionCommon+File.swift */,
+				AF4AFF122774BC4800EBE49C /* NCCollectionCommon+NCDelegate.swift */,
+				AF4AFF0B277495A400EBE49C /* NCCollectionCommon+Search.swift */,
 				F78ACD3F21903CC20088454D /* NCGridCell.swift */,
 				F78ACD4521903D010088454D /* NCGridCell.xib */,
 				F78ACD4121903CE00088454D /* NCListCell.swift */,
@@ -2479,7 +2479,7 @@
 				F7CBC31C24F78E79004D3812 /* NCSortMenu.swift in Sources */,
 				F769454822E9F20D000A798A /* NCShareNetworking.swift in Sources */,
 				F7C9555521F0C5470024296E /* NCActivity.swift in Sources */,
-				AF4AFF0F277495F900EBE49C /* NCCollectionCommon+DataSource.swift in Sources */,
+				AF4AFF0F277495F900EBE49C /* NCCollectionCommon+CollectionView.swift in Sources */,
 				F7725A60251F33BB00D125E0 /* NCFiles.swift in Sources */,
 				F704B5E52430AA8000632F5F /* NCCreateFormUploadConflict.swift in Sources */,
 				F765608F23BF813600765969 /* NCContentPresenter.swift in Sources */,

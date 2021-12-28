@@ -889,13 +889,13 @@ import Queuer
         }
     }
     
-    //MARK: - Search
+    // MARK: - Search
     
     /// WebDAV search
     @objc func searchFiles(urlBase: NCUserBaseUrl, literal: String, completion: @escaping (_ metadatas: [tableMetadata]?, _ errorCode: Int, _ errorDescription: String) -> ()) {
 
         NCCommunication.shared.searchLiteral(serverUrl: urlBase.urlBase, depth: "infinity", literal: literal, showHiddenFiles: CCUtility.getShowHiddenFiles(), queue: NCCommunicationCommon.shared.backgroundQueue) { (account, files, errorCode, errorDescription) in
-            guard errorCode != 0 else {
+            guard errorCode == 0 else {
                 return completion(nil, errorCode, errorDescription)
             }
 
@@ -965,13 +965,13 @@ import Queuer
             }
             update(searchFiles)
         } completion: { results, errorCode, errorDescription in
-            dispatchGroup.leave()
             errCode = errorCode
             errDescr = errorDescription
+            dispatchGroup.leave()
         }
     }
 
-    func loadMetadata(urlBase: NCUserBaseUrl, filePath: String, dispatchGroup: DispatchGroup, completion: @escaping (tableMetadata) -> Void) {
+    private func loadMetadata(urlBase: NCUserBaseUrl, filePath: String, dispatchGroup: DispatchGroup, completion: @escaping (tableMetadata) -> Void) {
         let urlPath = urlBase.urlBase + "/remote.php/dav/files/" + urlBase.user + filePath
         dispatchGroup.enter()
         self.readFile(serverUrlFileName: urlPath) { account, metadata, errorCode, errorDescription in

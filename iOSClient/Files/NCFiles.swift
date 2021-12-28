@@ -4,8 +4,10 @@
 //
 //  Created by Marino Faggiana on 26/09/2020.
 //  Copyright © 2020 Marino Faggiana. All rights reserved.
+//  Copyright © 2021 Henrik Storch. All rights reserved.
 //
 //  Author Marino Faggiana <marino.faggiana@nextcloud.com>
+//  Author Henrik Storch <henrik.storch@nextcloud.com>
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -72,15 +74,14 @@ class NCFiles: NCCollectionViewCommon {
         guard let appDelegate = appDelegate else { return }
 
         DispatchQueue.main.async {
-            if !self.isSearching && appDelegate.account != "" && appDelegate.urlBase != "" {
+            if !self.isSearching, !appDelegate.account.isEmpty, !appDelegate.urlBase.isEmpty {
                 self.metadatasSource = NCManageDatabase.shared.getMetadatas(predicate: NSPredicate(format: "account == %@ AND serverUrl == %@", appDelegate.account, self.serverUrl))
                 if self.metadataFolder == nil {
                     self.metadataFolder = NCManageDatabase.shared.getMetadataFolder(account: appDelegate.account, urlBase: appDelegate.urlBase, serverUrl: self.serverUrl)
                 }
             }
             
-            self.dataSource = NCDataSource.init(metadatasSource: self.metadatasSource, sort: self.layoutForView?.sort, ascending: self.layoutForView?.ascending, directoryOnTop: self.layoutForView?.directoryOnTop, favoriteOnTop: true, filterLivePhoto: true)
-            
+            self.dataSource = NCDataSource(metadatasSource: self.metadatasSource, sort: self.layoutForView?.sort, ascending: self.layoutForView?.ascending, directoryOnTop: self.layoutForView?.directoryOnTop, favoriteOnTop: true, filterLivePhoto: true)
             self.refreshControl.endRefreshing()
             self.collectionView.reloadData()
         }
@@ -89,9 +90,8 @@ class NCFiles: NCCollectionViewCommon {
     override func reloadDataSourceNetwork(forced: Bool = false) {
         super.reloadDataSourceNetwork(forced: forced)
 
-        if isSearching {
-            networkSearch()
-            return
+        guard !isSearching else {
+            return networkSearch()
         }
 
         isReloadDataSourceNetworkInProgress = true

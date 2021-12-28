@@ -24,6 +24,7 @@
 
 import UIKit
 import RealmSwift
+import NCCommunication
 
 protocol DateCompareable {
     var dateKey: Date { get }
@@ -358,6 +359,11 @@ class tableMetadata: Object, NCUserBaseUrl {
         } else {
             return false
         }
+    }
+    
+    var isMediaClassFile: Bool {
+        let fileClass = NCCommunicationCommon.typeClassFile(rawValue: classFile)
+        return fileClass == .audio || fileClass == .video || fileClass == .image
     }
 
     @objc dynamic var account = ""

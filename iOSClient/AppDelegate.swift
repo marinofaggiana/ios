@@ -897,3 +897,16 @@ extension AppDelegate: NCCreateFormUploadConflictDelegate {
         networkingProcessUpload?.createProcessUploads(metadatas: metadatas)
     }
 }
+
+extension AppDelegate {
+    func getVCForLayoutKey(layoutKey: String, serverUrlPush: String) -> UIViewController? {
+        switch layoutKey {
+        case NCGlobal.shared.layoutViewFiles: return listFilesVC[serverUrlPush]
+        case NCGlobal.shared.layoutViewFavorite: return listFavoriteVC[serverUrlPush]
+        case NCGlobal.shared.layoutViewOffline: return listOfflineVC[serverUrlPush]
+        case NCGlobal.shared.layoutViewRecent: return listFilesVC[serverUrlPush]
+        case NCGlobal.shared.layoutViewShares: return listFilesVC[serverUrlPush]
+        default: return nil
+        }
+    }
+}
